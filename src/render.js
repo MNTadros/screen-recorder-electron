@@ -5,8 +5,7 @@ const stopButton = document.querySelector("stopButton");
 const videoSelectButton = document.getElementById('videoSelectButton');
 videoSelectButton.onclick = getVideoSources;
 
-const { desktopCapturer} = require('electron');
-const remote = require('@electron/remote');
+const { desktopCapturer, remote } = require('electron');
 
 const { Menu } = remote;
 
