@@ -1,14 +1,33 @@
 // Grabbing elements
 const videoElement = document.querySelector("video");
-const startButton = document.querySelector("startButton");
-const stopButton = document.querySelector("stopButton");
 const videoSelectButton = document.getElementById('videoSelectButton');
 videoSelectButton.onclick = getVideoSources;
 
 let mediaRecorder; 
 const recordedChunks = [];
 const { desktopCapturer, remote } = require('electron');
-const { Menu } = remote;
+const { dialog , Menu } = remote;
+const { writeFile } = require("fs");
+
+// Button functionality
+const startButton = document.getElementById('startButton');
+startButton.onclick = e => {
+  mediaRecorder.start();
+  startButton.classList.add('is-danger');
+  startButton.innerText = 'Recording';
+};
+
+const stopButton = document.getElementById('stopButton');
+stopButton.onclick = e => {
+  mediaRecorder.stop();
+  startButton.classList.remove('is-danger');
+  startButton.innerText = 'Start';
+};
+
+function handleDataAvailable(e) {
+  console.log('Video data available!');
+  recordedChunks.push(e.data);
+}
 
 async function getVideoSources() {
   const inputSources = await desktopCapturer.getSources({
@@ -51,4 +70,21 @@ async function selectSource(source) {
   mediaRecorder = new MediaRecorder(stream, options);
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.onstop = handleStop
+}
+
+async function handleStop(e){
+  const blob = new Blob(recordedChunks,{
+    type: 'video/mp4; codesc=vp9'
+  });
+
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const{ filePath } = await dialog.showSaveDialog({
+    buttonLabel: 'Save Video',
+    defaultPath: `vid-${Date.now()}.mp4`
+  });
+  console.log(filePath );
+  if (filePath ) {
+    writeFile(filePath, buffer, () => console.log('video saved successfully!'));
+  }
 }
