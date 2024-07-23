@@ -1,14 +1,29 @@
 // Grabbing elements
+let videoTypesTuples = {
+  'video/mp4; codecs=vp9': '.mp4',
+  'video/webm; codecs=vp9': '.webm',
+  'video/mov; codecs=vp9': '.mov'
+};
+let keys = Object.keys(videoTypesTuples);
+let selectedIndex = 0;
+
 const videoElement = document.querySelector("video");
 const videoSelectButton = document.getElementById('videoSelectButton');
 videoSelectButton.onclick = getVideoSources;
-
 let mediaRecorder; 
 const recordedChunks = [];
 const { desktopCapturer, remote } = require('electron');
 const { dialog , Menu } = remote;
 const { writeFile } = require("fs");
 
+function updateSwitchButtonText() {
+  switchButton.innerText = `(${videoTypesTuples[keys[selectedIndex]]})`;
+}
+
+switchButton.onclick = () => {
+  selectedIndex = (selectedIndex + 1) % keys.length;
+  updateSwitchButtonText();
+};
 // Button functionality
 const startButton = document.getElementById('startButton');
 startButton.onclick = e => {
@@ -74,14 +89,14 @@ async function selectSource(source) {
 
 async function handleStop(e){
   const blob = new Blob(recordedChunks,{
-    type: 'video/mp4; codesc=vp9'
-  });
+    type: keys[selectedIndex]
+    });
 
   const buffer = Buffer.from(await blob.arrayBuffer());
 
   const{ filePath } = await dialog.showSaveDialog({
     buttonLabel: 'Save Video',
-    defaultPath: `vid-${Date.now()}.mp4`
+    defaultPath: `vid-${Date.now()}${videoTypesTuples[keys[selectedIndex]]}`
   });
   console.log(filePath );
   if (filePath ) {
