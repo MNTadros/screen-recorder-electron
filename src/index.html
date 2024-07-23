@@ -7,19 +7,22 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css" />
     <link rel="stylesheet" href="index.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="render.js"></script>
   </head>
-  <body class="content">
-    <h1>⚡ Electron Screen Recorder</h1>
+  <body class="content container-mx-auto px-12">
 
-    <video></video>
+    <video class = "w-full h-fullrs"></video>
 
-    <button id="startButton" class="button is-primary">Start</button>
-    <button id="stopButton" class="button is-warning">Stop</button>
+    <div class="space-x-4 py-6 pb-12">
+    <button id="startButton" class="button is-primary text-xl font-mono">Start</button>
+    <button id="stopButton" class="button is-warning text-xl font-mono">Stop</button>
+    </div>
+    <button id="switchButton" class="button is-primary text-xl font-mono">Switch Video Type</button>
 
-    <hr />
+    <hr/>
 
-    <button id="videoSelectButton" class="button is-text">
+    <button id="videoSelectButton" class="button is-text text-l font-mono my-8">
       Choose a Video Source
     </button>
   </body>
